@@ -8,7 +8,7 @@ const settings = {
 }
 
 function App() {
-  let remainingTime = useRef(5)
+  let remainingTime = useRef(settings.workingTime * 60)
   const [timeDisplay, setTimeDisplay] = useState(Math.floor(remainingTime.current / 60) + ':' + (remainingTime.current % 60).toString().padStart(2, '0'))
   let timer = useRef(settings.workingTime * 60);
   const [timerButton, setTimerButton] = useState(icons.play)
@@ -37,12 +37,23 @@ function App() {
           <svg viewBox="0 0 100 100" className="w-56 h-56 mt-6">
             <g className="text-white flex items-center justify-center">
               <circle
+                    className="stroke-slate-400 stroke-[0.5px] fill-none"
+                    cx="50"
+                    cy="50"
+                    r="45"
+                  />
+              <circle
                 className="stroke-red-500 stroke-[4px] fill-none"
                 cx="50"
                 cy="50"
                 r="45"
+                transform="rotate(-90)"
+                transform-origin="50 50"
+                stroke-linecap="round"
+                stroke-dasharray={2 * Math.PI * 45} // 2 * pi * r 
+                stroke-dashoffset={2 * Math.PI * 45 * (1 - remainingTime.current / (settings.workingTime * 60))}
               />
-              <text x="50" y="55" text-anchor="middle" fill='white'>
+              <text x="50" y="55" text-anchor="middle" fill='white' font-size="20">
                 {timeDisplay}
               </text>
               <text x="50" y="70" text-anchor="middle" fill='white' font-size="8">

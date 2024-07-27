@@ -1,23 +1,32 @@
 import { useState, useRef } from "preact/hooks";
 import TitleBar from "./components/TitleBar"
 import * as icons from "./Icons"
+import { sendNotification } from '@tauri-apps/api/notification';
 
 const settings = {
   workingTime: 25 // minutes
 }
 
 function App() {
-  let remainingTime = useRef(settings.workingTime * 60)
-  const [timeDisplay, setTimeDisplay] = useState('')
-  updateTimer(remainingTime.current)
+  let remainingTime = useRef(5)
+  const [timeDisplay, setTimeDisplay] = useState(Math.floor(remainingTime.current / 60) + ':' + (remainingTime.current % 60).toString().padStart(2, '0'))
+  let timer = useRef(settings.workingTime * 60);
   const [timerButton, setTimerButton] = useState(icons.play)
-  let timer = useRef(0);
 
   function updateTimer(time: number) {
     remainingTime.current = time
     setTimeDisplay(
       Math.floor(remainingTime.current / 60) + ':' + (remainingTime.current % 60).toString().padStart(2, '0')
     )
+
+    if (remainingTime.current == 0) {
+      clearInterval(timer.current)
+      sendNotification({
+        title: 'Pomodoro',
+        body: 'Timer is done',
+      })
+      setTimerButton(icons.play)
+    }
   }
 
   return(

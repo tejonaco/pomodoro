@@ -18,6 +18,9 @@
       },
       "window": {
         "all": true
+      },
+      "notification": {
+        "all": true
       }
     },
     "windows": [

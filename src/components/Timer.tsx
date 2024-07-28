@@ -32,7 +32,6 @@ export function useTimer(initialTime: number, timerDone: CallableFunction) {
     setIsActive(false);
     setTime(timeUpdate);
     setPercentage(0)
-    // paused.current = false;
   }, [initialTime]);
 
   useEffect(() => {
@@ -98,7 +97,7 @@ export function Timer({ time, percentage, mode = 'FOCUS' }: TimerInputs) {
     invoke('set_tray_icon', {
       svg: svg
     })
-  })
+  }, [time])
 
   return (
     <div className='flex justify-center content-start font-light'>

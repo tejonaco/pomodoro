@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri::SystemTray;
+use tauri::{Manager, SystemTray, SystemTrayEvent};
 use resvg::{tiny_skia, usvg};
 use image::{ImageBuffer, Rgba};
 
@@ -39,6 +39,22 @@ fn set_tray_icon(app: tauri::AppHandle, svg: &str) {
 fn main() {
     tauri::Builder::default()
         .system_tray(SystemTray::new())
+        .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::LeftClick {
+                tray_id: _,
+                position: _,
+                size: _,
+                ..
+              } => {
+                println!("OPEN!");
+                let window = app.app_handle().get_window("main").unwrap();
+                window.show().unwrap();
+                window.set_focus().unwrap();
+              },
+            _ => {
+                //
+            }
+        })
         .invoke_handler(tauri::generate_handler![set_tray_icon])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

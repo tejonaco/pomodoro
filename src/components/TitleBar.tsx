@@ -12,7 +12,7 @@ function TitleBar() {
         Pomodoro
       </h1>
         <div className='flex w-14 justify-between'>
-          <button onClick={appWindow.minimize} className='hover:text-green-400'>
+          <button onClick={appWindow.hide} className='hover:text-green-400'>
             {icons.minimize}
           </button>
           <button onClick={appWindow.close} className='hover:text-red-500'>

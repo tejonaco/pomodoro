@@ -11,8 +11,7 @@
   },
   "tauri": {
     "systemTray": {
-      "iconPath": "icons\\StoreLogo.png",
-      "iconAsTemplate": true
+      "iconPath": "icons\\StoreLogo.png"
     },
     "allowlist": {
       "all": false,

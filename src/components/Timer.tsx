@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "preact/hooks";
-import { sendNotification } from '@tauri-apps/api/notification';
+import { settings } from "../Settings";
 
 
-export function useTimer(initialTime: number, endMessage: string) {
+export function useTimer(initialTime: number, timerDone: CallableFunction) {
   const [time, setTime] = useState(initialTime);
   const [percentage, setPercentage] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -24,10 +24,10 @@ export function useTimer(initialTime: number, endMessage: string) {
     setIsActive(false);
   }, []);
 
-  const resetTimer = useCallback(() => {
+  const resetTimer = useCallback((timeUpdate=initialTime) => {
     clearInterval(countRef.current);
     setIsActive(false);
-    setTime(initialTime);
+    setTime(timeUpdate);
     setPercentage(0)
   }, [initialTime]);
 
@@ -35,12 +35,15 @@ export function useTimer(initialTime: number, endMessage: string) {
     if (time <= 0 && isActive) {
       clearInterval(countRef.current);
       setIsActive(false);
-      sendNotification({
-        title: 'Pomodoro',
-        body: endMessage
-      })
+      timerDone()
     }
   }, [time]);
+
+  useEffect(() => {
+    if (!isActive){
+      resetTimer()
+    }
+  }, [isActive]);
 
   useEffect(() => {
     return () => clearInterval(countRef.current);
@@ -67,7 +70,7 @@ export function Timer({ time, percentage, mode = 'FOCUS' }: TimerInputs) {
             r="45"
           />
           <circle
-            className="stroke-red-500 stroke-[4px] fill-none"
+            className={'stroke-[4px] fill-none ' + (mode == 'FOCUS'? 'stroke-red-500': 'stroke-green-500')}
             cx="50"
             cy="50"
             r="45"
@@ -78,7 +81,7 @@ export function Timer({ time, percentage, mode = 'FOCUS' }: TimerInputs) {
             stroke-dashoffset={2 * Math.PI * 45 * percentage}
           />
           <text x="50" y="55" text-anchor="middle" fill='white' font-size="20">
-            {Math.floor(time / 60) + ':' + (time % 60).toString().padStart(2, '0')}
+            {Math.floor(time / 60) + ':' + Math.round(time % 60).toString().padStart(2, '0')}
           </text>
           <text x="50" y="70" text-anchor="middle" fill='white' font-size="8">
             {mode}

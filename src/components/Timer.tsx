@@ -12,6 +12,7 @@ export function useTimer(initialTime: number, timerDone: CallableFunction) {
   const startTimeRef = useRef(0);
 
   const startTimer = useCallback(() => {
+    paused.current = false
     setIsActive(true);
     startTimeRef.current = Date.now() - (initialTime - time) * 1000;
     countRef.current = setInterval(() => {
@@ -66,10 +67,39 @@ type TimerInputs = {
   time: number
   percentage: number
   mode: string
+  isActive: boolean
 } 
 
-export function Timer({ time, percentage, mode = 'FOCUS' }: TimerInputs) {
+export function Timer({ time, percentage, mode = 'FOCUS', isActive = false}: TimerInputs) {
   useEffect(()=>{
+
+    const status = isActive ?
+          `<circle
+          cx="50"
+          cy="50"
+          r="28"
+          fill="none"
+          stroke="${mode == 'FOCUS'? '#ef4444': '#22c55e'}"
+          stroke-width="14"
+          transform="rotate(-90)"
+          transform-origin="50 50"
+          stroke-dasharray="${2 * Math.PI * 28}"
+          stroke-dashoffset="${2 * Math.PI * 28 * percentage}"
+        />`:
+
+        `<rect
+          fill="${mode == 'FOCUS'? '#ef4444': '#22c55e'}"
+          width="13"
+          height="50"
+          x="27"
+          y="25" />
+        <rect
+          fill="${mode == 'FOCUS'? '#ef4444': '#22c55e'}"
+          width="13"
+          height="50"
+          x="61"
+          y="25" />`
+
     // generate tray icon svg from timer percentage
     const svg = `
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -79,25 +109,14 @@ export function Timer({ time, percentage, mode = 'FOCUS' }: TimerInputs) {
               r="50"
               fill="#1e293b"
             />
-            <circle
-              cx="50"
-              cy="50"
-              r="28"
-              fill="none"
-              stroke="${mode == 'FOCUS'? '#ef4444': '#22c55e'}"
-              stroke-width="14"
-              transform="rotate(-90)"
-              transform-origin="50 50"
-              stroke-dasharray="${2 * Math.PI * 28}"
-              stroke-dashoffset="${2 * Math.PI * 28 * percentage}"
-            />
+            ${status}
         </svg>
     `
     // console.log(svg)
     invoke('set_tray_icon', {
       svg: svg
     })
-  }, [time])
+  }, [time, isActive])
 
   return (
     <div className='flex justify-center content-start font-light'>

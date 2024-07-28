@@ -46,7 +46,6 @@ fn main() {
                 size: _,
                 ..
               } => {
-                println!("OPEN!");
                 let window = app.app_handle().get_window("main").unwrap();
                 window.show().unwrap();
                 window.set_focus().unwrap();

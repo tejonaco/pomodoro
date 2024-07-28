@@ -32,11 +32,15 @@ export function useTimer(initialTime: number, timerDone: CallableFunction) {
   }, [initialTime]);
 
   useEffect(() => {
-    if (time <= 0 && isActive) {
-      clearInterval(countRef.current);
-      setIsActive(false);
-      timerDone()
-    }
+    if (isActive) {
+      if (time <= 0) {
+        clearInterval(countRef.current);
+        setIsActive(false);
+        timerDone()
+      }
+    } else if (settings.autoStartRound) {
+        startTimer()
+      }
   }, [time]);
 
   useEffect(() => {

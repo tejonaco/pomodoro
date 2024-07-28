@@ -8,9 +8,9 @@ import { useRef, useState } from "preact/hooks";
 function App() {
   const rounds = useRef(1)
   const [timerMode, setTimerMode] = useState('FOCUS')
-  // const [timerPreset, setTimerPreset] = useState(settings.workingTime * 60)
   const timerPreset = useRef(settings.workingTime * 60)
   const { time, percentage, isActive, startTimer, pauseTimer, resetTimer } = useTimer( timerPreset.current, timerDone);
+
 
 
   function timerDone () {

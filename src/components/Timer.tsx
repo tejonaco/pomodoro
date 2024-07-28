@@ -7,6 +7,7 @@ export function useTimer(initialTime: number, timerDone: CallableFunction) {
   const [time, setTime] = useState(initialTime);
   const [percentage, setPercentage] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const paused = useRef(false)
   const countRef = useRef(0);
   const startTimeRef = useRef(0);
 
@@ -23,6 +24,7 @@ export function useTimer(initialTime: number, timerDone: CallableFunction) {
   const pauseTimer = useCallback(() => {
     clearInterval(countRef.current);
     setIsActive(false);
+    paused.current = true;
   }, []);
 
   const resetTimer = useCallback((timeUpdate=initialTime) => {
@@ -30,6 +32,7 @@ export function useTimer(initialTime: number, timerDone: CallableFunction) {
     setIsActive(false);
     setTime(timeUpdate);
     setPercentage(0)
+    // paused.current = false;
   }, [initialTime]);
 
   useEffect(() => {
@@ -39,13 +42,15 @@ export function useTimer(initialTime: number, timerDone: CallableFunction) {
         setIsActive(false);
         timerDone()
       }
+    } else if (paused.current) {
+      paused.current = false
     } else if (settings.autoStartRound) {
         startTimer()
       }
   }, [time]);
 
   useEffect(() => {
-    if (!isActive){
+    if (!isActive && !paused.current){
       resetTimer()
     }
   }, [isActive]);

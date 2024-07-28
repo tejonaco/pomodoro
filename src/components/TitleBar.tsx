@@ -4,7 +4,7 @@ import * as icons from "../Icons"
 
 function TitleBar() {
   return (
-    <div className='flex text-white h-12 justify-between px-2 pt-1 items-center relative' data-tauri-drag-region={true} onDragStart={appWindow.startDragging}>
+    <div className='flex text-white h-12 justify-between px-2 pt-1 items-center relative stroke-[1.5px]' data-tauri-drag-region={true} onDragStart={appWindow.startDragging}>
         <button className='hover:text-green-400'>
           {icons.menu}
         </button>

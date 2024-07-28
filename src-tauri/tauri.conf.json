@@ -24,6 +24,17 @@
       },
       "notification": {
         "all": true
+      },
+      "fs": {
+        "readFile": true,
+        "writeFile": true,
+        "readDir": true,
+        "exists": true,
+        "createDir": true,
+        "scope": ["$APPCONFIG", "$APPCONFIG/*"]
+      },
+      "path": {
+        "all": true
       }
     },
     "windows": [

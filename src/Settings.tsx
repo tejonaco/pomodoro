@@ -2,7 +2,7 @@ import { writeTextFile, readTextFile, exists, createDir } from '@tauri-apps/api/
 import { appConfigDir, join } from '@tauri-apps/api/path';
 
 
-type PomodoroSettings = {
+export type PomodoroSettings = {
   workingTime: number
   shortBreakTime: number
   longBreakTime: number
@@ -19,7 +19,7 @@ const defaultSettings: PomodoroSettings = {
 }
 
 let SETTINGS_FILE: string;
-export const settings: PomodoroSettings = await readSettings()
+export let settings: PomodoroSettings = await readSettings()
 console.log(settings)
 
 async function readSettings(){
@@ -41,8 +41,8 @@ async function readSettings(){
 export async function saveConfig(config: PomodoroSettings) {
   try {
     const jsonString = JSON.stringify(config, null, 2);
-
     await writeTextFile(SETTINGS_FILE, jsonString);
+    settings = config
     
   } catch (error) {
     console.error('Error writing config: ', error);

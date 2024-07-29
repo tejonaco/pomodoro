@@ -21,12 +21,9 @@ const defaultSettings: PomodoroSettings = {
 let SETTINGS_FILE: string;
 export let settings: PomodoroSettings = defaultSettings;
 
-readSettings().then(jsonSettings => {
-  // in case some settings are missing
-  settings = {...defaultSettings, ...jsonSettings}
-})
+export const setSettings = (update: PomodoroSettings) => settings = update
 
-async function readSettings(){
+export async function readSettings(){
   const configDir = await appConfigDir();
   SETTINGS_FILE = await join(configDir, 'settings.json');
 

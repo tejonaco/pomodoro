@@ -1,7 +1,4 @@
-# Tauri + Preact + Typescript
+# Pomodoro Timer
 
-This template should help get you started developing with Tauri, Preact and Typescript in Vite.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+Pomodoro timer heavily based on [Pomotroid](https://github.com/Splode/pomotroid)
+Created to learn Tauri, it hasn't all the Pomotroid's features, but it's lighter and faster, since original Pomotroid is electron based.

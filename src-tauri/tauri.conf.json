@@ -7,11 +7,11 @@
   },
   "package": {
     "productName": "Pomodoro",
-    "version": "0.0.0"
+    "version": "1.0.0"
   },
   "tauri": {
     "systemTray": {
-      "iconPath": "icons\\StoreLogo.png"
+      "iconPath": "icons/icon.png"
     },
     "allowlist": {
       "all": false,

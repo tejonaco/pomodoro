@@ -19,8 +19,12 @@ const defaultSettings: PomodoroSettings = {
 }
 
 let SETTINGS_FILE: string;
-export let settings: PomodoroSettings = await readSettings()
-console.log(settings)
+export let settings: PomodoroSettings = defaultSettings;
+
+readSettings().then(jsonSettings => {
+  // in case some settings are missing
+  settings = {...defaultSettings, ...jsonSettings}
+})
 
 async function readSettings(){
   const configDir = await appConfigDir();
@@ -31,7 +35,7 @@ async function readSettings(){
   }
 
   if (!await exists(SETTINGS_FILE)) {
-    saveConfig(defaultSettings)
+    await saveConfig(defaultSettings)
   }
 
   const s = await readTextFile(SETTINGS_FILE)

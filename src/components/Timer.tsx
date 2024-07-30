@@ -3,63 +3,48 @@ import { settings } from "../Settings";
 import { invoke } from "@tauri-apps/api";
 
 
-export function useTimer(initialTime: number, timerDone: CallableFunction) {
-  const [time, setTime] = useState(initialTime);
+export function useTimer(startAt: number, timerDone: CallableFunction) {
+  const initialTime = useRef(startAt)
+  const time = useRef(startAt);
   const [percentage, setPercentage] = useState(0);
   const [isActive, setIsActive] = useState(false);
-  const paused = useRef(false)
   const countRef = useRef(0);
   const startTimeRef = useRef(0);
 
   const startTimer = useCallback(() => {
-    paused.current = false
     setIsActive(true);
-    startTimeRef.current = Date.now() - (initialTime - time) * 1000;
+    startTimeRef.current = Date.now() - (initialTime.current - time.current) * 1000;
     countRef.current = setInterval(() => {
       let runningTime = (Date.now() - startTimeRef.current) / 1000
-      setTime(initialTime - Math.floor(runningTime))
-      setPercentage(runningTime / initialTime)
+      time.current = initialTime.current - Math.floor(runningTime)
+      setPercentage(runningTime / initialTime.current)
     }, 1000);
-  }, [initialTime, time])
+  }, [initialTime.current, time])
 
   const pauseTimer = useCallback(() => {
     clearInterval(countRef.current);
     setIsActive(false);
-    paused.current = true;
-  }, []);
+  }, [])
 
-  const resetTimer = useCallback((timeUpdate=initialTime) => {
+  const resetTimer = useCallback((timeUpdate=initialTime.current) => {
     clearInterval(countRef.current);
     setIsActive(false);
-    setTime(timeUpdate);
+    initialTime.current = timeUpdate
+    time.current = timeUpdate
     setPercentage(0)
-  }, [initialTime]);
+  }, []);
 
   useEffect(() => {
     if (isActive) {
-      if (time <= 0) {
+      if (time.current <= 0) {
         clearInterval(countRef.current);
         setIsActive(false);
         timerDone()
       }
-    } else if (paused.current) {
-      paused.current = false
-    } else if (settings.autoStartRound) {
-        startTimer()
-      }
-  }, [time]);
-
-  useEffect(() => {
-    if (!isActive && !paused.current){
-      resetTimer()
     }
-  }, [isActive]);
+  }, [time.current]);
 
-  useEffect(() => {
-    return () => clearInterval(countRef.current);
-  }, []);
-
-  return { time, percentage, isActive, startTimer, pauseTimer, resetTimer };
+  return { time: time.current, percentage, isActive, startTimer, pauseTimer, resetTimer };
 }
 
 

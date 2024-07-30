@@ -5,32 +5,39 @@ import { sendNotification } from '@tauri-apps/api/notification';
 import { useRef, useState } from "preact/hooks";
 
 
-export default function TimerPage ({showSettings}: {showSettings: boolean}) {
+function getInitialTime(timerMode: string): number{
+  return {'FOCUS': settings.workingTime,
+    'SHORT BREAK': settings.shortBreakTime,
+    'LONG BREAK': settings.longBreakTime,
+        }[timerMode] as number * 60
+}
+
+export default function TimerPage () {
   const rounds = useRef(1)
   const [timerMode, setTimerMode] = useState('FOCUS')
-  const timerPreset = useRef(settings.workingTime * 60)
-  const { time, percentage, isActive, startTimer, pauseTimer, resetTimer } = useTimer( timerPreset.current, timerDone);
+  let { time, percentage, isActive, startTimer, pauseTimer, resetTimer } = useTimer( getInitialTime(timerMode), timerDone);
 
-  if (showSettings) {
-    return <></>
+  const changeTimerMode = (mode: string) => {
+    setTimerMode(mode)
+    resetTimer(getInitialTime(mode))
+    if (isActive && settings.autoStartRound){
+      startTimer()
+    }
   }
 
   function timerDone () {
     let endMessage;
     if (timerMode == 'FOCUS'){
       if (rounds.current == settings.rounds){
-        setTimerMode('LONG BREAK')
+        changeTimerMode('LONG BREAK')
         endMessage = 'Start a long break!'
-        timerPreset.current = settings.longBreakTime * 60
       } else {
-        setTimerMode('SHORT BREAK')
+        changeTimerMode('SHORT BREAK')
         endMessage = 'Start a short break!'
-        timerPreset.current = settings.shortBreakTime * 60
       }
     }else{
-      setTimerMode('FOCUS')
+      changeTimerMode('FOCUS')
       endMessage = 'Return to work!'
-      timerPreset.current = settings.workingTime * 60
       if (rounds.current == settings.rounds) {
         rounds.current = 1
       } else {
@@ -67,7 +74,6 @@ export default function TimerPage ({showSettings}: {showSettings: boolean}) {
             <button className='hover:text-green-400'
             onClick={()=> {
               timerDone();
-              resetTimer(timerPreset.current);
               }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">

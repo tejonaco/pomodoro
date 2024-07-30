@@ -5,11 +5,15 @@ import { sendNotification } from '@tauri-apps/api/notification';
 import { useRef, useState } from "preact/hooks";
 
 
-export default function TimerPage () {
+export default function TimerPage ({showSettings}: {showSettings: boolean}) {
   const rounds = useRef(1)
   const [timerMode, setTimerMode] = useState('FOCUS')
   const timerPreset = useRef(settings.workingTime * 60)
   const { time, percentage, isActive, startTimer, pauseTimer, resetTimer } = useTimer( timerPreset.current, timerDone);
+
+  if (showSettings) {
+    return <></>
+  }
 
   function timerDone () {
     let endMessage;

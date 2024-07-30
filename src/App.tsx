@@ -20,7 +20,8 @@ function App() {
   return (
     <div key={key} className='bg-slate-800 flex w-full h-screen flex-col rounded-2xl border-slate-700 border-[1px]'>
       <TitleBar showSettings={showSettings} setShowSettings={setShowSettings}/>
-      {showSettings? <SettingsPage setShowSettings={setShowSettings}/>: <TimerPage/>}
+      {showSettings? <SettingsPage setShowSettings={setShowSettings}/>: <></>}
+      <TimerPage showSettings={showSettings}/>
     </div>
   );
 }

@@ -40,7 +40,8 @@ export default function TimerPage ({showSettings}: {showSettings: boolean}) {
 
     sendNotification({
       title: 'Pomodoro',
-      body: endMessage
+      body: endMessage,
+      sound: 'default'
     })
   }
 

@@ -38,7 +38,6 @@ export default function SettingsPage({setShowSettings}: {setShowSettings: StateU
         e.preventDefault()
         await saveConfig(formData)
         setShowSettings(false)
-        console.log(settings)
       }}>
           <NumericInput label="Working time" value={formData.workingTime} onChange={(v) => formData.workingTime = v}/>
           <NumericInput label="Short break time" value={formData.shortBreakTime} onChange={(v) => formData.shortBreakTime = v}/>

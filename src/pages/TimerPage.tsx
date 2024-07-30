@@ -2,7 +2,7 @@ import * as icons from "../Icons"
 import { Timer, useTimer } from "../components/Timer";
 import { settings } from "../Settings";
 import { sendNotification } from '@tauri-apps/api/notification';
-import { useRef, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 
 function getInitialTime(timerMode: string): number{
@@ -12,7 +12,7 @@ function getInitialTime(timerMode: string): number{
         }[timerMode] as number * 60
 }
 
-export default function TimerPage () {
+export default function TimerPage ({showSettings}: {showSettings: boolean}) {
   const rounds = useRef(1)
   const [timerMode, setTimerMode] = useState('FOCUS')
   let { time, percentage, isActive, startTimer, pauseTimer, resetTimer } = useTimer( getInitialTime(timerMode), timerDone);
@@ -51,6 +51,12 @@ export default function TimerPage () {
       sound: 'default'
     })
   }
+
+  useEffect(()=>{
+    resetTimer(getInitialTime(timerMode))
+  }, [settings])
+
+  if (showSettings) return <></>
 
   return(
     <div className='flex flex-col grow'>

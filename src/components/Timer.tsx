@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "preact/hooks";
-import { settings } from "../Settings";
 import { invoke } from "@tauri-apps/api";
-
 
 export function useTimer(startAt: number, timerDone: CallableFunction) {
   const initialTime = useRef(startAt)
   const time = useRef(startAt);
+  const [displayTime, setDisplayTime] = useState(startAt)
   const [percentage, setPercentage] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const countRef = useRef(0);
@@ -31,10 +30,12 @@ export function useTimer(startAt: number, timerDone: CallableFunction) {
     setIsActive(false);
     initialTime.current = timeUpdate
     time.current = timeUpdate
+    setDisplayTime(timeUpdate)
     setPercentage(0)
-  }, []);
+  }, [])
 
   useEffect(() => {
+    setDisplayTime(time.current)
     if (isActive) {
       if (time.current <= 0) {
         clearInterval(countRef.current);
@@ -44,7 +45,7 @@ export function useTimer(startAt: number, timerDone: CallableFunction) {
     }
   }, [time.current]);
 
-  return { time: time.current, percentage, isActive, startTimer, pauseTimer, resetTimer };
+  return { time: displayTime, percentage, isActive, startTimer, pauseTimer, resetTimer };
 }
 
 
@@ -56,8 +57,15 @@ type TimerInputs = {
 } 
 
 export function Timer({ time, percentage, mode = 'FOCUS', isActive = false}: TimerInputs) {
-  useEffect(()=>{
+  const [key, setKey] = useState(0)
 
+  useEffect(()=>{
+    if (!isActive){
+      setKey(key+1)
+    }
+  }, [time])
+
+  useEffect(()=>{
     const status = isActive ?
           `<circle
           cx="50"
@@ -97,14 +105,14 @@ export function Timer({ time, percentage, mode = 'FOCUS', isActive = false}: Tim
             ${status}
         </svg>
     `
-    // console.log(svg)
+
     invoke('set_tray_icon', {
       svg: svg
     })
   }, [time, isActive])
 
   return (
-    <div className='flex justify-center content-start font-light'>
+    <div key={key} className='flex justify-center content-start font-light'>
       <svg viewBox="0 0 100 100" className="w-56 h-56 mt-6">
         <g className="text-white flex items-center justify-center">
           <circle

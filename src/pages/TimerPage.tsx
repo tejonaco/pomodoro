@@ -13,7 +13,7 @@ function getInitialTime(timerMode: string): number{
 }
 
 export default function TimerPage ({showSettings}: {showSettings: boolean}) {
-  const rounds = useRef(1)
+  const [rounds, setRounds] = useState(1)
   const [timerMode, setTimerMode] = useState('FOCUS')
   let { time, percentage, isActive, startTimer, pauseTimer, resetTimer } = useTimer( getInitialTime(timerMode), timerDone);
 
@@ -28,7 +28,7 @@ export default function TimerPage ({showSettings}: {showSettings: boolean}) {
   function timerDone () {
     let endMessage;
     if (timerMode == 'FOCUS'){
-      if (rounds.current == settings.rounds){
+      if (rounds == settings.rounds){
         changeTimerMode('LONG BREAK')
         endMessage = 'Start a long break!'
       } else {
@@ -38,10 +38,10 @@ export default function TimerPage ({showSettings}: {showSettings: boolean}) {
     }else{
       changeTimerMode('FOCUS')
       endMessage = 'Return to work!'
-      if (rounds.current == settings.rounds) {
-        rounds.current = 1
+      if (rounds == settings.rounds) {
+        setRounds(1)
       } else {
-        rounds.current++
+        setRounds(rounds + 1)
       }
     }
 
@@ -72,11 +72,21 @@ export default function TimerPage ({showSettings}: {showSettings: boolean}) {
         <div className='text-slate-300 w-full flex justify-between items-end grow p-4 '>
           <button 
             className='hover:text-green-400'
-            onClick={() => resetTimer()}>
+            onClick={() => {
+              if (isActive){
+                resetTimer()
+              }else if (timerMode == 'FOCUS') {
+
+                setRounds(Math.max(1, rounds - 1))
+                resetTimer()
+              }else{
+                changeTimerMode('FOCUS')
+              }
+            }}>
             RESET
           </button>
           <div className='flex flex-col'>
-            <p>{rounds.current + '/'  + settings.rounds}</p>
+            <p>{rounds + '/'  + settings.rounds}</p>
             <button className='hover:text-green-400'
             onClick={()=> {
               timerDone();

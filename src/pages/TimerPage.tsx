@@ -2,7 +2,7 @@ import * as icons from "../Icons"
 import { Timer, useTimer } from "../components/Timer";
 import { settings } from "../Settings";
 import { sendNotification } from '@tauri-apps/api/notification';
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 
 function getInitialTime(timerMode: string): number{

@@ -5,14 +5,16 @@ import { StateUpdater, useState } from "preact/hooks";
 type TitleBarInputs = {
   showSettings: boolean
   setShowSettings: StateUpdater<boolean>
+  miniMode: boolean
+  setMiniMode: StateUpdater<boolean>
 }
 
-function TitleBar({showSettings, setShowSettings}: TitleBarInputs) {
+function TitleBar({showSettings, setShowSettings, miniMode, setMiniMode}: TitleBarInputs) {
   const [windowPinned, setWindowPinned] = useState(false)
 
   return (
-    <div className='flex text-white h-12 justify-between px-2 pt-1 items-center relative stroke-[1.5px]' data-tauri-drag-region={true} onDragStart={appWindow.startDragging}>
-        <div className='flex w-16 justify-between'>
+    <div className={`flex text-white h-[10%] justify-between px-2 ${miniMode && !showSettings? 'pt-4': 'pt-1'} items-center relative stroke-[1.5px]`} data-tauri-drag-region={true} onDragStart={appWindow.startDragging}>
+        <div className='flex w-20 justify-between'>
           <button className='hover:text-green-400'
           onClick={() => setShowSettings(!showSettings)}
           >
@@ -29,11 +31,22 @@ function TitleBar({showSettings, setShowSettings}: TitleBarInputs) {
             }} className='hover:text-green-400'>
               {windowPinned? icons.unpin: icons.pin}
             </button>
+            <button onClick={() => {
+              if (miniMode) {
+                setMiniMode(false)
+              }else{
+                setMiniMode(true)
+              }
+            }} className='hover:text-green-400'>
+              {miniMode? icons.cancelMiniMode: icons.setMiniMode}
+            </button>
         </div>  
 
-        <h1 className='absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-green-400' data-tauri-drag-region={true} onDragStart={appWindow.startDragging}>
-        Pomodoro
-      </h1>
+        {miniMode && !showSettings? '':
+          <h1 className='absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-green-400' data-tauri-drag-region={true} onDragStart={appWindow.startDragging}>
+            Pomodoro
+          </h1>
+        }
         <div className='flex w-14 justify-between'>
           <button onClick={appWindow.hide} className='hover:text-green-400'>
             {icons.minimize}

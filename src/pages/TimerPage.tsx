@@ -1,5 +1,5 @@
 import * as icons from "../Icons"
-import { Timer, useTimer } from "../components/Timer";
+import { MiniTimer, Timer, useTimer } from "../components/Timer";
 import { settings } from "../Settings";
 import { sendNotification } from '@tauri-apps/api/notification';
 import { useEffect, useState } from "preact/hooks";
@@ -12,7 +12,7 @@ function getInitialTime(timerMode: string): number{
         }[timerMode] as number * 60
 }
 
-export default function TimerPage ({showSettings}: {showSettings: boolean}) {
+export default function TimerPage ({showSettings, miniMode}: {showSettings: boolean, miniMode: boolean}) {
   const [rounds, setRounds] = useState(1)
   const [timerMode, setTimerMode] = useState('FOCUS')
   let { time, percentage, isActive, startTimer, pauseTimer, resetTimer } = useTimer( getInitialTime(timerMode), timerDone);
@@ -56,7 +56,28 @@ export default function TimerPage ({showSettings}: {showSettings: boolean}) {
     resetTimer(getInitialTime(timerMode))
   }, [settings])
 
+  const handleReset = () => {
+    if (isActive){
+      resetTimer()
+    }else if (timerMode == 'FOCUS') {
+
+      setRounds(Math.max(1, rounds - 1))
+      resetTimer()
+    }else{
+      changeTimerMode('FOCUS')
+    }
+  }
+
   if (showSettings) return <></>
+
+  if (miniMode) {
+    return (
+      <div className='flex'>
+        <MiniTimer time={time} percentage={percentage} mode={timerMode} isActive={isActive}
+        startTimer={startTimer} pauseTimer={pauseTimer} handleReset={handleReset} timerDone={timerDone} rounds={rounds} />
+      </div>
+    )
+  }
 
   return(
     <div className='flex flex-col grow'>
@@ -72,17 +93,7 @@ export default function TimerPage ({showSettings}: {showSettings: boolean}) {
         <div className='text-slate-300 w-full flex justify-between items-end grow p-4 '>
           <button 
             className='hover:text-green-400'
-            onClick={() => {
-              if (isActive){
-                resetTimer()
-              }else if (timerMode == 'FOCUS') {
-
-                setRounds(Math.max(1, rounds - 1))
-                resetTimer()
-              }else{
-                changeTimerMode('FOCUS')
-              }
-            }}>
+            onClick={handleReset}>
             RESET
           </button>
           <div className='flex flex-col'>
@@ -92,12 +103,12 @@ export default function TimerPage ({showSettings}: {showSettings: boolean}) {
               timerDone();
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061A1.125 1.125 0 0 1 3 16.811V8.69ZM12.75 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061a1.125 1.125 0 0 1-1.683-.977V8.69Z" />
-              </svg>
+              {icons.skip}
             </button>
           </div>
         </div>
       </div>
   )
+
+
 }

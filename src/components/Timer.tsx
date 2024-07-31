@@ -213,13 +213,13 @@ export function MiniTimer({ time, percentage, mode = 'FOCUS', isActive = false, 
             stroke-dasharray={2 * Math.PI * 45}
             stroke-dashoffset={2 * Math.PI * 45 * percentage}
           />
-          <SVGButton icon={icons.play} size={15} x={50} y={25} className="stroke-white" onClick={isActive? pauseTimer: startTimer}/>
-          <SVGButton icon={icons.reset} size={12} x={35} y={80} className="stroke-white" onClick={handleReset}/>
-          <SVGButton icon={icons.skip} size={12} x={65} y={80} className="stroke-white" onClick={timerDone}/>
+          <SVGButton icon={isActive? icons.pause :icons.play} size={16} x={50} y={25} className="stroke-white hover:stroke-green-400" onClick={isActive? pauseTimer: startTimer}/>
+          <SVGButton icon={icons.reset} size={12} x={35} y={80} className="stroke-white hover:stroke-green-400" onClick={handleReset}/>
+          <SVGButton icon={icons.skip} size={12} x={65} y={80} className="stroke-white hover:stroke-green-400" onClick={timerDone}/>
           <text x="50" y="55" text-anchor="middle" fill='white' font-size="20">
             {Math.floor(time / 60) + ':' + Math.round(time % 60).toString().padStart(2, '0')}
           </text>
-          <text x="50" y="70" text-anchor="middle" fill='white' font-size="8">
+          <text x="50" y="68" text-anchor="middle" fill='white' font-size="8">
             {mode}
           </text>
           <text x="50" y="83" text-anchor="middle" fill='white' font-size="8">
